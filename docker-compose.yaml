@@ -17,6 +17,32 @@ services:
     networks:
       - web
 
+  dashboard:
+    build: ./dashboard
+    container_name: local-dashboard
+    restart: unless-stopped
+
+    environment:
+      TRAEFIK_HOST: traefik
+      TRAEFIK_PORT: "443"
+      DOMAINS_FILE: /config/domains.txt
+      PROJECTS_FILE: /config/projects.txt
+      APP_TITLE: "Local Projects"
+
+    volumes:
+      - ./domains.txt:/config/domains.txt:ro
+      - ./dashboard/projects.txt:/config/projects.txt:ro
+
+    networks:
+      - web
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard-local.rule=Host(`dashboard.localhost`)"
+      - "traefik.http.routers.dashboard-local.entrypoints=websecure"
+      - "traefik.http.routers.dashboard-local.tls=true"
+      - "traefik.http.services.dashboard-local.loadbalancer.server.port=8000"
+
 networks:
   web:
     external: true
