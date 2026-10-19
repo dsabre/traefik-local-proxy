@@ -1,7 +1,7 @@
 services:
   traefik:
     image: traefik:v3.7.15
-    container_name: traefik
+    container_name: proxy-traefik
     restart: unless-stopped
 
     ports:
@@ -19,29 +19,31 @@ services:
 
   dashboard:
     build: ./dashboard
-    container_name: local-dashboard
+    container_name: proxy-dashboard
     restart: unless-stopped
-
+    depends_on:
+      - traefik
     environment:
       TRAEFIK_HOST: traefik
       TRAEFIK_PORT: "443"
       DOMAINS_FILE: /config/domains.txt
-      PROJECTS_FILE: /config/projects.txt
-      APP_TITLE: "Local Projects"
-
+      APP_TITLE: Local Projects
+      HIDE_DOMAINS: localhost,dashboard.localhost
     volumes:
       - ./domains.txt:/config/domains.txt:ro
-      - ./dashboard/projects.txt:/config/projects.txt:ro
-
     networks:
       - web
-
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard-local.rule=Host(`dashboard.localhost`)"
-      - "traefik.http.routers.dashboard-local.entrypoints=websecure"
-      - "traefik.http.routers.dashboard-local.tls=true"
-      - "traefik.http.services.dashboard-local.loadbalancer.server.port=8000"
+      - traefik.enable=true
+      - traefik.http.routers.dashboard-local.rule=Host(`dashboard.localhost`)
+      - traefik.http.routers.dashboard-local.entrypoints=websecure
+      - traefik.http.routers.dashboard-local.tls=true
+      - traefik.http.services.dashboard-local.loadbalancer.server.port=8000
 
 networks:
   web:

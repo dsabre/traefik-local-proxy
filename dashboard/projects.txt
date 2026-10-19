@@ -1,2 +1,0 @@
-# dominio | nome | categoria | health URL | link interni
-legacy.vodafone.localhost | Legacy Vodafone | legacy | | Simula SSO::/simula
