@@ -7,6 +7,7 @@ cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 DOMAINS_FILE="domains.txt"
 CERT_FILE="certs/local-cert.pem"
 KEY_FILE="certs/local-key.pem"
+BASE_DOMAINS=(dashboard.localhost)
 
 if [[ ! -f "$DOMAINS_FILE" ]]; then
     printf 'File domini non trovato: %s\n' "$DOMAINS_FILE" >&2
@@ -14,14 +15,13 @@ if [[ ! -f "$DOMAINS_FILE" ]]; then
 fi
 
 mapfile -t DOMAINS < <(
-    sed 's/#.*//' "$DOMAINS_FILE" |
-        sed '/^[[:space:]]*$/d; s/^[[:space:]]*//; s/[[:space:]]*$//'
+    {
+        printf '%s\n' "${BASE_DOMAINS[@]}"
+        sed 's/#.*//; s/|.*//' "$DOMAINS_FILE"
+    } |
+        sed '/^[[:space:]]*$/d; s/^[[:space:]]*//; s/[[:space:]]*$//' |
+        awk '!seen[$0]++'
 )
-
-if ((${#DOMAINS[@]} == 0)); then
-    printf 'Nessun dominio configurato in %s\n' "$DOMAINS_FILE" >&2
-    exit 1
-fi
 
 mkdir -p certs
 
