@@ -82,8 +82,10 @@ const key = p => (p.label ? p.label.toLowerCase() : NONE);
 function cmp(a, b) {
   const la = (a.label || "").toLowerCase();
   const lb = (b.label || "").toLowerCase();
-  if (!la !== !lb) return la ? 1 : -1; // senza etichetta prima
-  return la.localeCompare(lb, "it") || a.name.localeCompare(b.name, "it", { sensitivity: "base" });
+  return (b.state === "online") - (a.state === "online")        // 1. online prima
+    || (!la !== !lb ? (la ? 1 : -1) : 0)                         // 2. senza etichetta prima
+    || la.localeCompare(lb, "it")                                // 3. etichetta
+    || a.name.localeCompare(b.name, "it", { sensitivity: "base" }); // 4. nome
 }
 
 function renderFilters(projects) {
