@@ -8,7 +8,6 @@ header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify
 h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
 .meta { display: flex; gap: 14px; align-items: center; color: var(--muted); font-size: .9rem; }
 main { padding: 16px clamp(16px, 4vw, 48px) 48px; }
-.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .card { display: flex; flex-direction: column; gap: 14px; padding: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
 .card.offline { opacity: .6; }
 .top { display: flex; align-items: center; gap: 12px; }
@@ -35,3 +34,10 @@ header .filters { flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 8px; marg
 .filter { padding: 4px 12px; background: transparent; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font: inherit; font-size: .85rem; cursor: pointer; }
 .filter:hover { border-color: var(--accent); color: var(--text); }
 .filter.active { background: #262a33; border-color: var(--accent); color: var(--text); }
+
+.grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+.card { min-width: 0; }
+@media (min-width: 640px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1280px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1600px) { .grid { grid-template-columns: repeat(5, 1fr); } }
